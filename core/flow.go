@@ -75,7 +75,7 @@ func CheckFlow(cfg libs.Cfg) string {
 func SelectModules(moduleNames []string, cfg libs.Cfg) []string {
 	modePath := path.Join(cfg.Env.WorkflowFolder, "general/*.yaml")
 	if cfg.Flow.Name != "" {
-		modePath = path.Join(cfg.Env.WorkflowFolder, fmt.Sprintf("%v/*.yaml"), cfg.Flow.Name)
+		modePath = path.Join(cfg.Env.WorkflowFolder, fmt.Sprintf("%v/*.yaml", cfg.Flow.Name))
 	}
 	modules, err := filepath.Glob(modePath)
 	if err != nil {
