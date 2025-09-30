@@ -34,8 +34,17 @@ func (sc *Scanner) PrepareWorkflow() {
 		modules := SelectModules(routine.Modules, sc.Cfg)
 		routine.RoutineName = fmt.Sprintf("flow-%s", sc.Cfg.Flow.Name)
 		for _, module := range modules {
-			fmt.Println(module)
+			parseModuleContent, err := ParseModule(module)
+			if err != nil && parseModuleContent.Name == "" {
+				continue
+			}
+			sc.TotalSteps = len(parseModuleContent.Steps)
+			routine.ParsedModules = append(routine.ParsedModules, parseModuleContent)
 		}
+		sc.Routines = append(sc.Routines, routine)
+	}
+	if len(sc.Routines) == 0 {
+		utils.ErrorF("flow %s not found, please check your flow name", sc.Cfg.Flow)
 	}
 }
 func GetAllFlowModules(cfg libs.Cfg) []string {

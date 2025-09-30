@@ -36,7 +36,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&cfg.Mics.Debug, "debug", "d", false, "debug mode")
 	//scan
 	RootCmd.PersistentFlags().StringSliceVarP(&cfg.Scan.Inputs, "target", "t", []string{}, "scan target or target list")
-	RootCmd.PersistentFlags().StringVar(&cfg.Scan.FlowName, "flow", "general", "scan workflow")
+	RootCmd.PersistentFlags().StringVarP(&cfg.Scan.FlowName, "flow", "f", "general", "scan workflow")
 	RootCmd.PersistentFlags().IntVarP(&cfg.Concurrency, "concurrency", "c", 1, "scan Concurrency")
 	RootCmd.PersistentFlags().StringVar(&cfg.Tactics, "tactic", "default", "Please select your scanning strategy [default aggressive gently]")
 

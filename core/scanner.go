@@ -13,16 +13,21 @@ type Scanner struct {
 	Input           string
 	Cfg             libs.Cfg
 	target          map[string]string
+	Params          map[string]string
 	VM              *otto.Otto
 	DoneFile        string
 	RuntimeFile     string
 	WorkspaceFolder string
 	RuntimeInfo     libs.RuntimeInfo
+	Routines        []libs.Routine
 
 	Workspace   string
 	RoutineName string
 	RoutineType string
 	RoutinePath string
+
+	TotalSteps int
+	Reports    []string
 }
 
 func (sc *Scanner) Scan() {
@@ -39,7 +44,10 @@ func (sc *Scanner) Scan() {
 	utils.InforF("Scan workflow:%v", color.CyanString(sc.Cfg.Scan.FlowName))
 
 	sc.NewRuntime()
-
+	sc.PrepareStepParams()
+	for _, routine := range sc.Routines {
+		sc.RunRoutine(routine.ParsedModules)
+	}
 }
 
 func (sc *Scanner) PreWorker() {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/flosch/pongo2/v6"
 	"os"
 	"path"
 	"strings"
@@ -66,4 +67,41 @@ func ParseFlow(flowFile string) (libs.Flow, error) {
 	}
 	utils.DebugF("flow content:%v", flow)
 	return flow, nil
+}
+
+func ParseModule(moduleFile string) (libs.Module, error) {
+	utils.DebugF("parsing module:%v", moduleFile)
+	var module libs.Module
+	moduleContent, err := os.ReadFile(moduleFile)
+	if err != nil {
+		utils.ErrorF("YAML parsing %v err:%v", moduleFile, err)
+		return module, err
+	}
+	err = yaml.Unmarshal(moduleContent, &module)
+	if err != nil {
+		utils.ErrorF("unmarshal %v error:%v", moduleFile, err)
+		return module, err
+	}
+	module.ModulePath = moduleFile
+	return module, err
+}
+func ReplaceData(format string, data map[string]string) string {
+	variable := make(map[string]interface{})
+	for k, v := range data {
+		variable[k] = v
+	}
+	if tpl, err := pongo2.FromString(format); err == nil {
+		out, ok := tpl.Execute(variable)
+		if ok == nil {
+			return out
+		}
+		utils.ErrorF("Error when resolve template: %v", ok)
+	}
+	return format
+}
+func ReplaceSlice(slice []string, data map[string]string) (resolveSlice []string) {
+	for _, s := range slice {
+		resolveSlice = append(resolveSlice, ReplaceData(s, data))
+	}
+	return resolveSlice
 }
